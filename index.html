@@ -1,0 +1,66 @@
+---
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site.name }} · {{ site.title }}</title>
+  <meta name="description" content="{{ site.tagline | strip_html }}">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+</head>
+<body class="landing">
+  <main class="wrap">
+    <section class="bio">
+      {% if site.photo and site.photo != "" %}
+      <img class="bio-photo" src="{{ site.photo | relative_url }}" alt="{{ site.name }}">
+      {% endif %}
+      <div>
+        <h1>{{ site.name }}</h1>
+        <p class="lead">{{ site.tagline }}</p>
+      </div>
+    </section>
+
+    <div class="bio-text">
+      {{ site.bio | markdownify }}
+    </div>
+
+    <section class="landing-shelf">
+      <div class="bookshelf">
+        {% for s in site.sites %}
+        <div class="book-slot">
+          <a class="book big-book" href="{{ s.url }}"
+             style="--spine: {{ s.color | default: '#5a4a3a' }}; --h: {% cycle '300px', '284px', '292px', '276px' %}; --w: 118px;"
+             data-title="{{ s.title | escape }}" data-summary="{{ s.blurb | escape }}">
+            <span class="book-title">{{ s.title }}</span>
+            <span class="book-year">{{ s.label }}</span>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="shelf-caption" data-caption aria-live="polite">Pick a book.</p>
+    </section>
+
+    {% if site.links.size > 0 %}
+    <footer class="landing-footer">
+      {% for l in site.links %}<a href="{{ l.url }}">{{ l.title }}</a>{% endfor %}
+    </footer>
+    {% endif %}
+  </main>
+
+  <script>
+    (function () {
+      function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+      var shelf = document.querySelector('.bookshelf'), cap = document.querySelector('[data-caption]');
+      if (!shelf || !cap) return;
+      var initial = cap.innerHTML;
+      shelf.querySelectorAll('.book').forEach(function (b) {
+        function show() { cap.innerHTML = '<strong>' + esc(b.dataset.title) + '</strong> · ' + esc(b.dataset.summary); }
+        b.addEventListener('mouseenter', show);
+        b.addEventListener('focus', show);
+      });
+      shelf.addEventListener('mouseleave', function () { cap.innerHTML = initial; });
+    })();
+  </script>
+</body>
+</html>
